@@ -1,0 +1,38 @@
+{
+	"info": {
+		"_postman_id": "15ef24c8-b8b4-48bb-a51b-25e5ee8611e5",
+		"name": "task-queue",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15430335"
+	},
+	"item": [
+		{
+			"name": "request-M1",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"Task data\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/process",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"process"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

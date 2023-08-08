@@ -1,12 +1,27 @@
-const express = require('express')
-const app = express()
-const port = 3001
+const amqp = require('amqplib');
+require('dotenv').config()
 
+const queueName = process.env.TASK_QUEUE;
+const resultQueueName = process.env.RESULT_QUEUE;
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+async function consumeTasks() {
+  try {
+    const connection = await amqp.connect(process.env.RABBIT_MQ_URL);
+    const channel = await connection.createChannel();
+    await channel.assertQueue(queueName);
+    await channel.assertQueue(resultQueueName);
+    console.log('Microservice M2 waiting for tasks...');
+    await channel.consume(queueName, async (message) => {
+      if (message !== null) {
+        const task = JSON.parse(message.content.toString());
+        const processedResult = { ...task, processed: true };
+        channel.sendToQueue(resultQueueName, Buffer.from(JSON.stringify(processedResult)));
+        channel.ack(message);
+      }
+    });
+  } catch (error) {
+    console.error('Error in Microservice M2:', error);
+  }
+}
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
-})
+consumeTasks();
