@@ -5,8 +5,6 @@ require('dotenv').config()
 
 const { processedData } = require('../service/ProcessedDataService')
 const { rabbitMQ } = require('../service/RabbitMQService')
-
-
 const queueName = process.env.TASK_QUEUE;
 
 
@@ -19,6 +17,7 @@ router.post('/process', async (req, res) => {
     };
     const channel = rabbitMQ.getChannel()
     await channel.assertQueue(queueName);
+    console.log('M1: received http request: ', Date.now())
     channel.sendToQueue(queueName, Buffer.from(JSON.stringify(task)));
     processedData.setData(taskId, {...task, response: res})
   } catch (err) {

@@ -30,10 +30,12 @@ class RabbitMQService {
     await channel?.assertQueue(resultQueue);
     await channel?.consume(resultQueue, async (message) => {
         if (message !== null) {
+          console.log('M1: task received from RabbitMQ: ', Date.now())
           const task = JSON.parse(message.content.toString());
           const data = processedData.getData(task.id)
           data.response.status(200).json({result: task })
           channel.ack(message);
+          processedData.removeData(task.id)
         }
       });
     } catch (error) {
